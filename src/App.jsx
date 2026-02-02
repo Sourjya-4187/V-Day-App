@@ -2,9 +2,9 @@
  * Will You Be My Valentine – main app.
  * Login screen first (client-side only), then Valentine proposal with YES/NO and modal.
  */
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { isLoggedIn, setLoggedIn, validate, clearAllAndLogout } from './auth';
-import { playPop, playSad, isSoundEnabled, setSoundEnabled } from './sounds';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { isLoggedIn, setLoggedIn, validate, clearAllAndLogout } from "./auth";
+import { playPop, playSad, isSoundEnabled, setSoundEnabled } from "./sounds";
 
 /** Duration (ms) of modal close animation – must match CSS .modal-overlay--closing */
 const MODAL_CLOSE_DURATION = 300;
@@ -23,13 +23,15 @@ const PERSUASION_MESSAGES = [
 ];
 
 function pickRandomMessage() {
-  return PERSUASION_MESSAGES[Math.floor(Math.random() * PERSUASION_MESSAGES.length)];
+  return PERSUASION_MESSAGES[
+    Math.floor(Math.random() * PERSUASION_MESSAGES.length)
+  ];
 }
 
 /** Login screen – username, mobile/password, client-side validation only. */
 function LoginScreen({ onLogin }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
@@ -46,7 +48,7 @@ function LoginScreen({ onLogin }) {
   return (
     <div className="app">
       <main className="card login-card">
-        <h1 className="login-title">Will You Be My Valentine? 💘</h1>
+        <h1 className="login-title">Ohhh , Helluuu ?</h1>
         <p className="login-subtitle">Sign in to continue</p>
         <form className="login-form" onSubmit={handleSubmit}>
           <label className="login-label" htmlFor="login-username">
@@ -61,7 +63,7 @@ function LoginScreen({ onLogin }) {
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
             autoCapitalize="off"
-            aria-invalid={error ? 'true' : undefined}
+            aria-invalid={error ? "true" : undefined}
           />
           <label className="login-label" htmlFor="login-password">
             Password
@@ -74,7 +76,7 @@ function LoginScreen({ onLogin }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            aria-invalid={error ? 'true' : undefined}
+            aria-invalid={error ? "true" : undefined}
           />
           {error && (
             <p className="login-error" role="alert">
@@ -143,16 +145,16 @@ function App() {
   // When modal opens: lock body scroll and focus close button for keyboard users
   useEffect(() => {
     if (!modalOpen) {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
       return;
     }
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     const focusId = requestAnimationFrame(() => {
       closeButtonRef.current?.focus();
     });
     return () => {
       cancelAnimationFrame(focusId);
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [modalOpen]);
 
@@ -160,10 +162,10 @@ function App() {
   useEffect(() => {
     if (!modalOpen) return;
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && !modalClosing) closeModal();
+      if (e.key === "Escape" && !modalClosing) closeModal();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalOpen, modalClosing, closeModal]);
 
   // Sync sound state with localStorage (e.g. after change in another tab)
@@ -216,17 +218,27 @@ function App() {
       <div className="app">
         <main className="card">
           {/* Decorative stickers – subtle, romantic */}
-          <span className="sticker sticker-1" aria-hidden="true">💕</span>
-          <span className="sticker sticker-2" aria-hidden="true">✨</span>
-          <span className="sticker sticker-3" aria-hidden="true">🌸</span>
+          <span className="sticker sticker-1" aria-hidden="true">
+            💕
+          </span>
+          <span className="sticker sticker-2" aria-hidden="true">
+            ✨
+          </span>
+          <span className="sticker sticker-3" aria-hidden="true">
+            🌸
+          </span>
           <button
             type="button"
             className="sound-toggle"
             onClick={toggleSound}
-            aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}
-            title={soundOn ? 'Sound on (click to turn off)' : 'Sound off (click to turn on)'}
+            aria-label={soundOn ? "Turn sound off" : "Turn sound on"}
+            title={
+              soundOn
+                ? "Sound on (click to turn off)"
+                : "Sound off (click to turn on)"
+            }
           >
-            {soundOn ? '🔊' : '🔇'}
+            {soundOn ? "🔊" : "🔇"}
           </button>
           <h1 className="title">Will you be my Valentine? 💘</h1>
 
@@ -244,8 +256,8 @@ function App() {
                   onClick={handleYes}
                   aria-label="Yes, I'll be your Valentine"
                   style={{
-                    '--yes-scale': Math.min(1.35, 1 + noClickCount * 0.045),
-                    '--yes-glow': Math.min(1, noClickCount * 0.12),
+                    "--yes-scale": Math.min(1.35, 1 + noClickCount * 0.045),
+                    "--yes-glow": Math.min(1, noClickCount * 0.12),
                   }}
                 >
                   YES 💕
@@ -256,8 +268,8 @@ function App() {
                   onClick={handleNo}
                   aria-label="No"
                   style={{
-                    '--no-scale': Math.max(0.52, 1 - noClickCount * 0.06),
-                    '--no-wobble': noClickCount % 2 === 0 ? 1 : -1,
+                    "--no-scale": Math.max(0.52, 1 - noClickCount * 0.06),
+                    "--no-wobble": noClickCount % 2 === 0 ? 1 : -1,
                   }}
                 >
                   NO 😤
@@ -277,7 +289,7 @@ function App() {
       {/* YES celebration modal: overlay + dialog, smooth open/close */}
       {modalOpen && (
         <div
-          className={`modal-overlay ${modalClosing ? 'modal-overlay--closing' : ''}`}
+          className={`modal-overlay ${modalClosing ? "modal-overlay--closing" : ""}`}
           onClick={closeModal}
           role="dialog"
           aria-modal="true"
@@ -286,7 +298,9 @@ function App() {
         >
           <div className="modal-heart-burst" aria-hidden="true">
             {[...Array(12)].map((_, i) => (
-              <span key={i} className="modal-burst-heart" style={{ '--i': i }}>💕</span>
+              <span key={i} className="modal-burst-heart" style={{ "--i": i }}>
+                💕
+              </span>
             ))}
           </div>
           {/* Stop propagation so clicking modal content doesn't close */}
@@ -304,16 +318,26 @@ function App() {
             >
               ×
             </button>
-            <h2 id="modal-title" className="modal-title">Yayyy!! 🥹💖</h2>
-            <p id="modal-desc" className="modal-subtext">Pookie & Cute Bubu Forever 💕</p>
+            <h2 id="modal-title" className="modal-title">
+              Yayyy!! 🥹💖
+            </h2>
+            <p id="modal-desc" className="modal-subtext">
+              Pookie & Cute Bubu Forever 💕
+            </p>
             <div className="modal-mascots">
               <div className="mascot">
-                <span className="mascot-emoji" aria-hidden="true">🧸</span>
+                <span className="mascot-emoji" aria-hidden="true">
+                  🧸
+                </span>
                 <span className="mascot-name">Pookie</span>
               </div>
-              <span className="mascot-heart" aria-hidden="true">💕</span>
+              <span className="mascot-heart" aria-hidden="true">
+                💕
+              </span>
               <div className="mascot">
-                <span className="mascot-emoji" aria-hidden="true">🐻‍❄️</span>
+                <span className="mascot-emoji" aria-hidden="true">
+                  🐻‍❄️
+                </span>
                 <span className="mascot-name">Bubu</span>
               </div>
             </div>

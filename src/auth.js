@@ -4,17 +4,23 @@
  * NOT real authentication.
  */
 
-const AUTH_STORAGE_KEY = 'valentine-logged-in';
+const AUTH_STORAGE_KEY = "valentine-logged-in";
 
-/** Hardcoded credentials (for demo only). */
+/**
+ * Credentials are read from build-time environment variables.
+ * IMPORTANT: Do NOT put real secrets into the repo. Create a local `.env`
+ * (gitignored) with `VITE_AUTH_USERNAME` and `VITE_AUTH_PASSWORD`.
+ * NOTE: Vite `VITE_` vars are embedded at build time and will be visible
+ * in client bundles. For true confidentiality move auth to a backend.
+ */
 const CREDENTIALS = {
-  username: 'shash',
-  password: '9438860142',
+  username: String(import.meta.env.VITE_AUTH_USERNAME ?? "guest").toLowerCase(),
+  password: String(import.meta.env.VITE_AUTH_PASSWORD ?? "guest"),
 };
 
 export function isLoggedIn() {
   try {
-    return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+    return localStorage.getItem(AUTH_STORAGE_KEY) === "true";
   } catch {
     return false;
   }
@@ -22,7 +28,7 @@ export function isLoggedIn() {
 
 export function setLoggedIn() {
   try {
-    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    localStorage.setItem(AUTH_STORAGE_KEY, "true");
   } catch {
     // ignore
   }
@@ -33,8 +39,10 @@ export function setLoggedIn() {
  * Returns true if match, false otherwise.
  */
 export function validate(username, password) {
-  const u = String(username ?? '').trim().toLowerCase();
-  const p = String(password ?? '').trim();
+  const u = String(username ?? "")
+    .trim()
+    .toLowerCase();
+  const p = String(password ?? "").trim();
   return u === CREDENTIALS.username.toLowerCase() && p === CREDENTIALS.password;
 }
 
@@ -52,17 +60,17 @@ export function clearAllAndLogout() {
   }
   // Clear all cookies (document.cookie is the only way from JS)
   try {
-    document.cookie.split(';').forEach((c) => {
+    document.cookie.split(";").forEach((c) => {
       document.cookie = c
-        .replace(/^\s+/, '')
-        .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+        .replace(/^\s+/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
   } catch {
     // ignore
   }
   // Clear Cache API (service worker caches) if available
   try {
-    if ('caches' in window && typeof caches.keys === 'function') {
+    if ("caches" in window && typeof caches.keys === "function") {
       caches.keys().then((names) => {
         names.forEach((name) => caches.delete(name));
       });
