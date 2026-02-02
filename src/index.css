@@ -1,4 +1,7 @@
-/* Mobile-first: romantic pastel theme */
+/* ==========================================================================
+   Will You Be My Valentine – global styles (mobile-first)
+   ========================================================================== */
+
 :root {
   --bg-start: #ffe4ec;
   --bg-mid: #f8e0f0;
@@ -38,7 +41,9 @@ body {
   position: relative;
 }
 
-/* Full-screen centered container */
+/* --------------------------------------------------------------------------
+   Layout: full-screen centered card
+   -------------------------------------------------------------------------- */
 .app {
   position: relative;
   z-index: 1;
@@ -51,7 +56,9 @@ body {
   min-height: 60vh;
 }
 
-/* Floating hearts layer (CSS only) */
+/* --------------------------------------------------------------------------
+   Background: floating hearts (CSS-only animation)
+   -------------------------------------------------------------------------- */
 .hearts {
   position: fixed;
   inset: 0;
@@ -119,6 +126,7 @@ body {
 
 /* Card */
 .card {
+  position: relative;
   background: var(--card-bg);
   border-radius: 1.5rem;
   padding: 2.25rem 1.5rem;
@@ -126,6 +134,43 @@ body {
   text-align: center;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Optional sound toggle – subtle, top-right of card */
+.sound-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s, background 0.2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sound-toggle:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sound-toggle:focus {
+  outline: none;
+}
+
+.sound-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .title {
@@ -138,14 +183,7 @@ body {
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
 }
 
-.actions {
-  display: flex;
-  gap: 0.875rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Buttons below heading */
+/* Button row below heading */
 .actions {
   display: flex;
   gap: 0.875rem;
@@ -154,6 +192,7 @@ body {
   margin-top: 0.25rem;
 }
 
+/* Base button: tap target ≥44px, no tap delay, focus-visible ring */
 .btn {
   font-family: var(--font-body);
   font-weight: 700;
@@ -162,6 +201,19 @@ body {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* YES – grows slightly after each NO click (--yes-scale) */
@@ -260,7 +312,9 @@ body {
   font-weight: 600;
 }
 
-/* YES modal – joyful & celebratory */
+/* --------------------------------------------------------------------------
+   YES celebration modal (overlay + dialog, open/close animations)
+   -------------------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -271,12 +325,26 @@ body {
   padding: 1rem;
   background: rgba(44, 30, 50, 0.6);
   backdrop-filter: blur(4px);
-  animation: overlay-in 0.25s ease;
+  animation: overlay-in 0.25s ease forwards;
+}
+
+/* Close animation (duration must match MODAL_CLOSE_DURATION in App.jsx) */
+.modal-overlay--closing {
+  animation: overlay-out 0.3s ease forwards;
+}
+
+.modal-overlay--closing .modal {
+  animation: modal-pop-out 0.3s ease forwards;
 }
 
 @keyframes overlay-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .modal {
@@ -290,7 +358,7 @@ body {
     0 24px 48px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.5) inset,
     0 8px 32px rgba(233, 30, 99, 0.25);
-  animation: modal-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modal-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes modal-pop {
@@ -304,12 +372,25 @@ body {
   }
 }
 
+@keyframes modal-pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+}
+
 .modal-close {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,6 +402,17 @@ body {
   border-radius: 50%;
   cursor: pointer;
   transition: color 0.2s, background 0.2s, transform 0.2s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-close:focus {
+  outline: none;
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .modal-close:hover {
@@ -384,7 +476,7 @@ body {
   align-self: center;
 }
 
-/* Heart burst – small hearts fly out from center */
+/* Heart burst on modal open (hearts fly out from center) */
 .modal-heart-burst {
   position: fixed;
   inset: 0;
@@ -431,7 +523,9 @@ body {
 .modal-burst-heart:nth-child(11) { --burst-offset: translate(-60px, -35px); }
 .modal-burst-heart:nth-child(12) { --burst-offset: translate(-35px, -60px); }
 
-/* Tablet and up */
+/* --------------------------------------------------------------------------
+   Responsive: tablet and up
+   -------------------------------------------------------------------------- */
 @media (min-width: 600px) {
   .card {
     padding: 2.75rem 2.25rem;
@@ -484,7 +578,9 @@ body {
   }
 }
 
-/* Desktop */
+/* --------------------------------------------------------------------------
+   Responsive: desktop
+   -------------------------------------------------------------------------- */
 @media (min-width: 900px) {
   .app {
     max-width: 32rem;

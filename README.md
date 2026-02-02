@@ -19,104 +19,57 @@ V-Day-App/
 │   └── index.css    # Global styles (mobile-first)
 ├── index.html
 ├── package.json
-├── vite.config.js   # Configured for GitHub Pages base path
+├── vite.config.js   # Base path set for GitHub Pages
 └── README.md
 ```
 
 ## Local development
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server (http://localhost:5173)
 npm run dev
+```
 
-# Preview production build locally
-npm run build && npm run preview
+Dev server: http://localhost:5173
+
+Preview production build locally:
+
+```bash
+npm run build
+npm run preview
 ```
 
 ## Deploy to GitHub Pages
 
-### 1. Set the correct base path
+### 1. Set the base path
 
-In `vite.config.js`, set `base` to your repo name with leading and trailing slashes:
+In `vite.config.js`, set `base` to **your repo name** with leading and trailing slashes:
 
-```js
-base: '/V-Day-App/',   // Use your actual repo name
-```
+- Repo `V-Day-App` → site at `https://<user>.github.io/V-Day-App/` → `base: '/V-Day-App/'`
+- Repo `my-valentine` → `base: '/my-valentine/'`
+- User/org site at `https://<user>.github.io/` → `base: '/'`
 
-If your site will live at `https://username.github.io/V-Day-App/`, the base is `'/V-Day-App/'`.  
-If it will be at `https://username.github.io/` (user/org site), use `base: '/'`.
-
-### 2. Build
+### 2. Deploy (three steps)
 
 ```bash
+npm install
 npm run build
+npm run deploy
 ```
 
-Output goes to the `dist/` folder.
+`npm run deploy` uses **gh-pages** to push the `dist/` folder to the `gh-pages` branch.
 
-### 3. Deploy the `dist` folder
+### 3. Turn on GitHub Pages
 
-**Option A – GitHub Actions (recommended)**
+1. Open your repo on GitHub → **Settings** → **Pages**.
+2. Under **Build and deployment** → **Source**, choose **Deploy from a branch**.
+3. **Branch**: select `gh-pages` and **/ (root)**.
+4. Save. After a minute, the app will be at `https://<username>.github.io/<repo-name>/`.
 
-1. Create `.github/workflows/deploy.yml`:
+### If the app doesn’t load correctly
 
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-```
-
-2. In the repo: **Settings → Pages → Build and deployment → Source**: choose **GitHub Actions**.
-3. Push to `main`; the workflow will build and deploy.
-
-**Option B – Manual deploy**
-
-1. In repo **Settings → Pages**, set source to **Deploy from a branch**.
-2. Choose the branch that contains `dist/` (e.g. `main` or `gh-pages`) and `/ (root)` or `/docs` if you put `dist` in `docs`.
-3. Commit the contents of `dist/` (e.g. copy `dist` into `docs` and commit, then set Pages to deploy from `docs`).
-
-### 4. After first deploy
-
-- Wait a minute, then open `https://<username>.github.io/<repo-name>/`.
-- If assets 404, double-check `base` in `vite.config.js` matches your repo (and that you rebuilt after changing it).
+- **Blank or 404:** Check that `base` in `vite.config.js` matches your repo name (e.g. `'/V-Day-App/'` for repo `V-Day-App`).
+- After changing `base`, run `npm run build` and `npm run deploy` again.
 
 ## License
 
