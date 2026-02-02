@@ -14,8 +14,8 @@ const AUTH_STORAGE_KEY = "valentine-logged-in";
  * in client bundles. For true confidentiality move auth to a backend.
  */
 const CREDENTIALS = {
-  username: String(import.meta.env.VITE_AUTH_USERNAME ?? "guest").toLowerCase(),
-  password: String(import.meta.env.VITE_AUTH_PASSWORD ?? "guest"),
+  username: "shash",
+  password: "9438860142",
 };
 
 export function isLoggedIn() {
