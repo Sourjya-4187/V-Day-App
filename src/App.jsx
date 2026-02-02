@@ -1,8 +1,9 @@
 /**
  * Will You Be My Valentine – main app.
- * Handles YES/NO buttons, persuasion messages, and celebration modal.
+ * Login screen first (client-side only), then Valentine proposal with YES/NO and modal.
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { isLoggedIn, setLoggedIn, validate, clearAllAndLogout } from './auth';
 import { playPop, playSad, isSoundEnabled, setSoundEnabled } from './sounds';
 
 /** Duration (ms) of modal close animation – must match CSS .modal-overlay--closing */
@@ -25,7 +26,72 @@ function pickRandomMessage() {
   return PERSUASION_MESSAGES[Math.floor(Math.random() * PERSUASION_MESSAGES.length)];
 }
 
+/** Login screen – username, mobile/password, client-side validation only. */
+function LoginScreen({ onLogin }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError(null);
+    if (validate(username, password)) {
+      setLoggedIn();
+      onLogin();
+    } else {
+      setError("Hmm… you sure you're my Valentine? 🥺");
+    }
+  };
+
+  return (
+    <div className="app">
+      <main className="card login-card">
+        <h1 className="login-title">Will You Be My Valentine? 💘</h1>
+        <p className="login-subtitle">Sign in to continue</p>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label className="login-label" htmlFor="login-username">
+            Username
+          </label>
+          <input
+            id="login-username"
+            type="text"
+            className="login-input"
+            placeholder="Remember the name I want to call you."
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            autoCapitalize="off"
+            aria-invalid={error ? 'true' : undefined}
+          />
+          <label className="login-label" htmlFor="login-password">
+            Password
+          </label>
+          <input
+            id="login-password"
+            type="password"
+            className="login-input"
+            placeholder="Something related to me ?.."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            aria-invalid={error ? 'true' : undefined}
+          />
+          {error && (
+            <p className="login-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button type="submit" className="btn btn-yes login-btn">
+            Login ❤️
+          </button>
+        </form>
+      </main>
+    </div>
+  );
+}
+
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(isLoggedIn);
   const [noClickCount, setNoClickCount] = useState(0);
   const [persuasionMessage, setPersuasionMessage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -52,6 +118,11 @@ function App() {
     const next = !soundOn;
     setSoundOn(next);
     setSoundEnabled(next);
+  };
+
+  const handleBackToLogin = () => {
+    clearAllAndLogout();
+    setIsAuthenticated(false);
   };
 
   const closeModal = useCallback(() => {
@@ -100,6 +171,20 @@ function App() {
     setSoundOn(isSoundEnabled());
   }, []);
 
+  // Show login screen until client-side "auth" succeeds
+  if (!isAuthenticated) {
+    return (
+      <>
+        <div className="hearts" aria-hidden="true">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="heart" />
+          ))}
+        </div>
+        <LoginScreen onLogin={() => setIsAuthenticated(true)} />
+      </>
+    );
+  }
+
   return (
     <>
       {/* Background: decorative floating hearts (CSS-only animation) */}
@@ -109,8 +194,31 @@ function App() {
         ))}
       </div>
 
+      {/* Top-left: Back to login (fixed, not on card) */}
+      <button
+        type="button"
+        className="back-to-login"
+        onClick={handleBackToLogin}
+        aria-label="Back to login (clears all stored data)"
+        title="Back to login – clears localStorage, cookies & cache"
+      >
+        ← Back
+      </button>
+
+      {/* Top-right: avatar + name */}
+      <div className="profile-corner">
+        <div className="profile-avatar" aria-hidden="true">
+          S
+        </div>
+        <span className="profile-name">Shashhhhh</span>
+      </div>
+
       <div className="app">
         <main className="card">
+          {/* Decorative stickers – subtle, romantic */}
+          <span className="sticker sticker-1" aria-hidden="true">💕</span>
+          <span className="sticker sticker-2" aria-hidden="true">✨</span>
+          <span className="sticker sticker-3" aria-hidden="true">🌸</span>
           <button
             type="button"
             className="sound-toggle"
@@ -137,6 +245,7 @@ function App() {
                   aria-label="Yes, I'll be your Valentine"
                   style={{
                     '--yes-scale': Math.min(1.35, 1 + noClickCount * 0.045),
+                    '--yes-glow': Math.min(1, noClickCount * 0.12),
                   }}
                 >
                   YES 💕
