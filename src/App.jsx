@@ -18,28 +18,26 @@ function pickRandomMessage() {
 }
 
 function App() {
-  const [answered, setAnswered] = useState(false);
-  const [yes, setYes] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  // State: NO clicks, persuasion message, YES modal visibility, and whether user said YES (for card message)
   const [noClickCount, setNoClickCount] = useState(0);
   const [persuasionMessage, setPersuasionMessage] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [saidYes, setSaidYes] = useState(false);
 
   const handleYes = () => {
-    setAnswered(true);
-    setYes(true);
+    setSaidYes(true);
     setModalOpen(true);
   };
 
   const handleNo = () => {
-    setPersuasionMessage(pickRandomMessage());
     setNoClickCount((c) => c + 1);
+    setPersuasionMessage(pickRandomMessage());
   };
 
   const closeModal = () => setModalOpen(false);
 
   useEffect(() => {
-    if (modalOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = '';
+    document.body.style.overflow = modalOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [modalOpen]);
 
@@ -54,7 +52,11 @@ function App() {
         <main className="card">
           <h1 className="title">Will you be my Valentine? 💘</h1>
 
-          {!answered ? (
+          {saidYes ? (
+            <p className="response">
+              Yay! You made my day! 💕 Happy Valentine's Day!
+            </p>
+          ) : (
             <>
               <div className="actions">
                 <button
@@ -83,12 +85,6 @@ function App() {
                 </p>
               )}
             </>
-          ) : (
-            <p className="response">
-              {yes
-                ? "Yay! You made my day! 💕 Happy Valentine's Day!"
-                : "No worries! I'll be here. 💝"}
-            </p>
           )}
         </main>
       </div>
