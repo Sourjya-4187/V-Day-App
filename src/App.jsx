@@ -52,7 +52,7 @@ function LoginScreen({ onLogin }) {
         <p className="login-subtitle">Sign in to continue</p>
         <form className="login-form" onSubmit={handleSubmit}>
           <label className="login-label" htmlFor="login-username">
-            Username
+            Some Name ?
           </label>
           <input
             id="login-username"
@@ -66,11 +66,11 @@ function LoginScreen({ onLogin }) {
             aria-invalid={error ? "true" : undefined}
           />
           <label className="login-label" htmlFor="login-password">
-            Password
+            Some Digits ?
           </label>
           <input
             id="login-password"
-            type="password"
+            type="password "
             className="login-input"
             placeholder="Something related to me ?.."
             value={password}
@@ -84,7 +84,7 @@ function LoginScreen({ onLogin }) {
             </p>
           )}
           <button type="submit" className="btn btn-yes login-btn">
-            Login ❤️
+            Login
           </button>
         </form>
       </main>
@@ -212,7 +212,7 @@ function App() {
         <div className="profile-avatar" aria-hidden="true">
           S
         </div>
-        <span className="profile-name">Shashhhhh</span>
+        <span className="profile-name">Shashwati</span>
       </div>
 
       <div className="app">
